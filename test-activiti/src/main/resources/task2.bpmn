@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/test" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="m1462353036736" name="" targetNamespace="http://www.activiti.org/test" typeLanguage="http://www.w3.org/2001/XMLSchema">
+  <process id="task2" isClosed="false" isExecutable="true" name="task2" processType="None">
+    <startEvent id="_2" name="StartEvent"/>
+    <endEvent id="_3" name="EndEvent"/>
+    <userTask activiti:assignee="老总" activiti:exclusive="true" id="总经理审批" name="总经理审批"/>
+    <userTask activiti:async="false" activiti:exclusive="true" id="部门经理审批" name="部门经理审批">
+      <extensionElements>
+        <activiti:taskListener class="com.lionxxw.activiti.task.MyTaskListener" event="create"/>
+      </extensionElements>
+    </userTask>
+    <userTask activiti:assignee="#{applicator}" activiti:exclusive="true" id="申请请假" name="申请请假"/>
+    <sequenceFlow id="_7" name="to 申请请假" sourceRef="_2" targetRef="申请请假"/>
+    <sequenceFlow id="_8" name="to 部门进口管审批" sourceRef="申请请假" targetRef="部门经理审批"/>
+    <sequenceFlow id="_9" name="to 总经理审批" sourceRef="部门经理审批" targetRef="总经理审批"/>
+    <sequenceFlow id="_10" sourceRef="总经理审批" targetRef="_3"/>
+  </process>
+  <bpmndi:BPMNDiagram documentation="background=#3C3F41;count=1;horizontalcount=1;orientation=0;width=842.4;height=1195.2;imageableWidth=832.4;imageableHeight=1185.2;imageableX=5.0;imageableY=5.0" id="Diagram-_1" name="New Diagram">
+    <bpmndi:BPMNPlane bpmnElement="task2">
+      <bpmndi:BPMNShape bpmnElement="_2" id="Shape-_2">
+        <omgdc:Bounds height="32.0" width="32.0" x="120.0" y="-5.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_3" id="Shape-_3">
+        <omgdc:Bounds height="32.0" width="32.0" x="120.0" y="305.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="总经理审批" id="Shape-总经理审批">
+        <omgdc:Bounds height="55.0" width="85.0" x="95.0" y="225.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="部门经理审批" id="Shape-部门经理审批">
+        <omgdc:Bounds height="55.0" width="85.0" x="95.0" y="140.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="申请请假" id="Shape-申请请假">
+        <omgdc:Bounds height="55.0" width="85.0" x="90.0" y="55.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_7" id="BPMNEdge__7" sourceElement="_2" targetElement="申请请假">
+        <omgdi:waypoint x="136.0" y="27.0"/>
+        <omgdi:waypoint x="136.0" y="55.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_8" id="BPMNEdge__8" sourceElement="申请请假" targetElement="部门经理审批">
+        <omgdi:waypoint x="135.0" y="110.0"/>
+        <omgdi:waypoint x="135.0" y="140.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_9" id="BPMNEdge__9" sourceElement="部门经理审批" targetElement="总经理审批">
+        <omgdi:waypoint x="137.5" y="195.0"/>
+        <omgdi:waypoint x="137.5" y="225.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_10" id="BPMNEdge__10" sourceElement="总经理审批" targetElement="_3">
+        <omgdi:waypoint x="136.0" y="280.0"/>
+        <omgdi:waypoint x="136.0" y="305.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

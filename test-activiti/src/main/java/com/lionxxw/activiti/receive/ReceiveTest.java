@@ -2,10 +2,7 @@ package com.lionxxw.activiti.receive;
 
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
-import org.activiti.engine.task.Task;
 import org.junit.Test;
-
-import java.util.List;
 
 /**
  * <p>Description: receivetask </p>

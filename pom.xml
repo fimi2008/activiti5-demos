@@ -7,6 +7,13 @@
   <version>1.0-SNAPSHOT</version>
   <modules>
     <module>test-activiti</module>
+    <module>user-service-api</module>
+    <module>user-service-provider</module>
+    <module>employee-service-api</module>
+    <module>employee-service-provider</module>
+    <module>common</module>
+    <module>generator</module>
+    <module>erp-admin-web</module>
   </modules>
   <packaging>pom</packaging>
 
@@ -19,7 +26,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spring.version>3.1.2.RELEASE</spring.version>
+    <springframework.version>4.0.7.RELEASE</springframework.version>
     <activiti.version>5.19.0.2</activiti.version>
     <mysql-connector-java.version>5.1.31</mysql-connector-java.version>
     <commons-dbcp.version>1.4</commons-dbcp.version>
@@ -30,8 +37,8 @@
     <slf4j-log4j12.version>1.7.6</slf4j-log4j12.version>
     <commons-lang3.version>3.1</commons-lang3.version>
     <javax.annotation-api.version>1.2</javax.annotation-api.version>
-    <commons-io.version>2.4</commons-io.version>
     <log4j.version>1.2.17</log4j.version>
+    <commons-io.version>2.4</commons-io.version>
   </properties>
 
   <dependencies>
@@ -83,17 +90,17 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>${spring.version}</version>
+      <version>${springframework.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>${spring.version}</version>
+      <version>${springframework.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>${spring.version}</version>
+      <version>${springframework.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-dbcp</groupId>
@@ -103,22 +110,22 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>${spring.version}</version>
+      <version>${springframework.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>
-      <version>${spring.version}</version>
+      <version>${springframework.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
-      <version>${spring.version}</version>
+      <version>${springframework.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
-      <version>${spring.version}</version>
+      <version>${springframework.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mybatis</groupId>

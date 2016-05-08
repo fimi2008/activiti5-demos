@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <#include "/common/head.htm"/>
+</head>
+<body>
+    <div class="widget-box">
+        <div class="widget-header">
+            <h5 class="smaller">请假详情</h5>
+
+            <div class="widget-toolbar no-border">
+                <ul class="nav nav-tabs" id="myTab">
+                    <li class="active"><a data-toggle="tab" href="#home">申请信息</a></li>
+                    <li><a data-toggle="tab" href="#profile">流程图</a></li>
+                    <li><a data-toggle="tab" href="#info">历史信息</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main padding-5">
+                <div class="tab-content">
+                    <div id="home" class="tab-pane in active">
+                        <div class="span12">
+                            <table id="table_bug_report" class="table table-striped table-bordered table-hover">
+                                <tr>
+                                    <td class='center'>请假人</td>
+                                    <td class='center'>${(datas.emp.name)!}</td>
+                                </tr>
+                                <tr>
+                                    <td class='center'>请假天数</td>
+                                    <td class='center'>${(datas.leaveDay)!}</td>
+                                </tr>
+                                <tr>
+                                    <td class='center'>请假原因</td>
+                                    <td class='center'>${(datas.leaveReason)!}</td>
+                                </tr>
+                                <tr>
+                                    <td class='center'>审核</td>
+                                    <td class='center'>
+                                        <#if datas.assignee??>
+                                            <a class="btn btn-mini btn-success" href="/act/completeTask.do?taskId=${(datas.taskId)!}">
+                                                <i class="icon-ok"></i>
+                                            </a>
+                                        </#if>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div><!--/span-->
+                    </div>
+                    <div id="profile" class="tab-pane" style="position: relative;">
+                        <img src="/act/getImage.do?pdId=${(datas.pdId)!}">
+                        <#assign coordinateObj = datas.coordinates />
+                        <div style="position:absolute; border:2px solid red;left:${coordinateObj.x - 1}px;top:${coordinateObj.y-1 }px;width:${coordinateObj.width }px;height:${coordinateObj.height }px;"></div>
+                    </div>
+                    <div id="info" class="tab-pane">
+                        <ul>
+                            <#if datas.instans??>
+                                <#list datas.instans as task>
+                                    <li>时间：${(task.startTime?string("yyyy-MM-dd HH:mm:ss"))!}&nbsp;&nbsp;${(task.name)!}</li>
+                                </#list>
+                            </#if>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+    <i class="icon-double-angle-up icon-only"></i>
+</a>
+<!-- basic scripts -->
+<script src="/static/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+    window.jQuery || document.write("<script src='/static/js/jquery-1.9.1.min.js'>\x3C/script>");
+</script>
+
+<script src="/static/js/bootstrap.min.js"></script>
+<!-- page specific plugin scripts -->
+
+<script type="text/javascript" src="/static/js/jquery-ui-1.10.2.custom.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.ui.touch-punch.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.slimscroll.min.js"></script>
+<!-- ace scripts -->
+<script src="/static/js/ace-elements.min.js"></script>
+<script src="/static/js/ace.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<#include "/common/head.htm"/>
+		<link rel="stylesheet" href="/static/css/jquery-ui-1.10.2.custom.min.css" />
+		<link rel="stylesheet" href="/static/css/chosen.css" />
+		<link rel="stylesheet" href="/static/css/datepicker.css" />
+		<link rel="stylesheet" href="/static/css/bootstrap-timepicker.css" />
+		<link rel="stylesheet" href="/static/css/daterangepicker.css" />
+		<link rel="stylesheet" href="/static/css/colorpicker.css" />
+	</head>
+	<body>
+		<div class="container-fluid" id="main-container">
+			<div id="main-content" class="clearfix" style="margin-left:0px;">
+					<div id="page-content" class="clearfix">
+						<div class="row-fluid">
+							<!-- PAGE CONTENT BEGINS HERE -->
+							<form id="submitForm" class="form-horizontal" method="POST">
+								<input type="hidden" id="id" name="id" value="${(emp.id)!}"/>
+								<div class="control-group">
+									<label class="control-label" for="account">员工账号</label>
+									<div class="controls">
+										<input type="text" name="account" class="span10" id="account" placeholder="请输入员工账号" value="${(emp.account)!}" />
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label" for="name">员工姓名</label>
+									<div class="controls">
+										<input type="text" name="name" class="span10" id="name" placeholder="请输入员工姓名" value="${(emp.name)!}" />
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">性别</label>
+									<div class="controls">
+										<label style="display: inline-block;">
+											<input name="sex" <#if emp?? && emp.sex?? && emp.sex == 0>checked="true"</#if> type="radio" value="0" /><span class="lbl">男</span>
+										</label>
+										<label style="display: inline-block;">
+											<input name="sex" <#if emp?? && emp.sex?? && emp.sex == 1>checked="true"</#if> type="radio" value="1" /><span class="lbl">女</span>
+										</label>
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label" for="pwd">密码</label>
+									<div class="controls">
+										<input type="text" name="pwd" class="span10" id="pwd" placeholder="请输入密码" value="${(emp.pwd)!}" />
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label" for="email">邮箱</label>
+									<div class="controls">
+										<input type="text" name="email" class="span10" id="email" placeholder="请输入邮箱" value="${(emp.email)!}" />
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label" for="mobile">手机号码</label>
+									<div class="controls">
+										<input type="text" name="mobile" class="span10" id="mobile" placeholder="请输入手机号码" value="${(emp.mobile)!}" />
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label" for="managerId">上级领导</label>
+									<div class="controls">
+										<select class="chzn-select" name="managerId" id="managerId" data-placeholder="请选择一个领导">
+											<option value=""></option>
+											<#if managers??>
+												<#list managers as manager>
+													<option <#if emp?? && emp.managerId?? && emp.managerId == manager.id>selected="true"</#if> value='${(manager.id)!}'>${(manager.name)!}(${(manager.account)!})</option>
+												</#list>
+											</#if>
+										</select>
+									</div>
+								</div>
+
+								<div class="form-actions">
+									<button id='savebutton' class="btn btn-info" type="button"><i class="icon-ok"></i><#if emp??>更新<#else>新增</#if></button>
+									&nbsp; &nbsp; &nbsp;
+									<button class="btn" type="reset" id="reset-btn"><i class="icon-undo"></i>关闭</button>
+								</div>
+							 </form>
+							<!-- PAGE CONTENT ENDS HERE -->
+						 </div><!--/row-->
+					</div><!--/#page-content-->
+			</div><!-- #main-content -->
+		</div><!--/.fluid-container#main-container-->
+		<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+			<i class="icon-double-angle-up icon-only"></i>
+		</a>
+		<!-- basic scripts -->
+		<script src="/static/1.9.1/jquery.min.js"></script>
+		<script type="text/javascript">
+		window.jQuery || document.write("<script src='/static/js/jquery-1.9.1.min.js'>\x3C/script>");
+		</script>
+		
+		<script src="/static/js/bootstrap.min.js"></script>
+		<!-- page specific plugin scripts -->
+		
+		<!--[if lt IE 9]>
+		<script type="text/javascript" src="/static/js/excanvas.min.js"></script>
+		<![endif]-->
+		<script type="text/javascript" src="/static/js/jquery-ui-1.10.2.custom.min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.ui.touch-punch.min.js"></script>
+		<script type="text/javascript" src="/static/js/chosen.jquery.min.js"></script>
+		<script type="text/javascript" src="/static/js/fuelux.spinner.js"></script>
+		<script type="text/javascript" src="/static/js/bootstrap-datepicker.min.js"></script>
+		<script type="text/javascript" src="/static/js/bootstrap-timepicker.min.js"></script>
+		<script type="text/javascript" src="/static/js/date.js"></script>
+		<script type="text/javascript" src="/static/js/daterangepicker.min.js"></script>
+		<script type="text/javascript" src="/static/js/bootstrap-colorpicker.min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.autosize-min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.inputlimiter.1.3.1.min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.maskedinput.min.js"></script>
+		<!-- ace scripts -->
+		<script src="/static/js/ace-elements.min.js"></script>
+		<script src="/static/js/ace.min.js"></script>
+		<!-- inline scripts related to this page -->
+		
+		<!-- layer 弹出框处理 -->
+		<script type="text/javascript" src="/plugins/layer2.0/layer.js"></script>
+		<!-- 自定义js -->
+		<script type="text/javascript" src="/static/js/wx-defined.js"></script>
+		<script type="text/javascript">
+		var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+		$(function() {
+			$(".chzn-select").chosen();
+			
+			$("#savebutton").on('click',function(){
+				var ajaxParams = $("#submitForm").serialize();
+				$.ajax({
+					type : "POST",
+					url : "/emp/save.do",
+					data : ajaxParams,
+					datatype : "json",// "xml", "html", "script", "json", "jsonp", "text".
+					beforeSend : function() {
+					},
+					success : function(data) {// 成功返回之后调用的函数
+						var jsondata = null;//eval('(' + data + ')');
+						if (data instanceof Object){
+							jsondata = data;
+						}else{
+							jsondata = eval('(' + data + ')');
+						}
+						if(jsondata.status == 200){
+							parent.layer.msg(jsondata.message, {
+								shade: [0.9, '#000'],
+							    icon: 6,
+							    time: 1500 //2秒关闭（如果不配置，默认是3秒）
+							}, function(){
+								parent.reload_page();
+								parent.layer.close(index);
+							}); 							
+						}else{
+							parent.layer.msg(jsondata.message, {
+								shade: [0.9, '#000'],
+							    icon: 6,
+							    time: 1500 //2秒关闭（如果不配置，默认是3秒）
+							}, function(){
+							}); 	
+						}
+						//console.log(data.success);
+					},
+					complete : function(XMLHttpRequest, textStatus) {// 调用执行后调用的函数
+						
+					},
+					error : function() {// 调用出错执行的函数
+					}
+				});
+			});
+			
+			$("#reset-btn").on('click',function(){
+				parent.layer.close(index);
+			});
+		});
+		</script>
+	</body>
+</html>

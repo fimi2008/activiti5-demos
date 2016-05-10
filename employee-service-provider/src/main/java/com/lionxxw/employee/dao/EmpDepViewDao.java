@@ -31,6 +31,14 @@ public class EmpDepViewDao extends MyBatisBaseDao<EmpDepView> {
     @Getter
     private EmpDepViewMapper mapper;
 
+    public EmpDepView selectByPrimaryKey(Long id) throws Exception{
+        EmployeeDto obj = new EmployeeDto();
+        obj.setId(id);
+        List<EmpDepView> empDepViews = queryByParam(obj, null);
+        if (ObjectUtil.notEmpty(empDepViews)) return empDepViews.get(0);
+        return null;
+    }
+
     public List<EmpDepView> queryByParam(EmployeeDto obj, PageQuery query) throws Exception{
         EmpDepViewExample example = new EmpDepViewExample();
         EmpDepViewExample.Criteria criteria = example.createCriteria();

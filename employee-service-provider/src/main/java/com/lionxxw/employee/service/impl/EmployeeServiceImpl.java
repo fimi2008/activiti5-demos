@@ -5,12 +5,18 @@ import com.lionxxw.common.model.PageResult;
 import com.lionxxw.common.utils.BeanUtil;
 import com.lionxxw.common.utils.ExceptionUtil;
 import com.lionxxw.common.utils.ObjectUtil;
+import com.lionxxw.employee.dao.EmpDepTempDao;
+import com.lionxxw.employee.dao.EmpDepViewDao;
 import com.lionxxw.employee.dao.EmployeeDao;
 import com.lionxxw.employee.dto.EmployeeDto;
+import com.lionxxw.employee.entity.EmpDepTemp;
+import com.lionxxw.employee.entity.EmpDepView;
 import com.lionxxw.employee.entity.Employee;
 import com.lionxxw.employee.service.EmployeeService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +32,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private EmployeeDao employeeDao;
+    @Autowired
+    private EmpDepTempDao empDepTempDao;
+    @Autowired
+    private EmpDepViewDao empDepViewDao;
 
     /**
      * 保存员工对象
@@ -74,7 +84,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     public EmployeeDto getById(Long id) throws Exception {
         ExceptionUtil.checkIdIsNull(id, this.getClass(), "getById");
-        Employee employee = employeeDao.selectByPrimaryKey(id);
+        EmpDepView employee = empDepViewDao.selectByPrimaryKey(id);
         ExceptionUtil.checkObjNotExist(employee);
         EmployeeDto dto =BeanUtil.createBeanByTarget(employee, EmployeeDto.class);
         return dto;
@@ -87,7 +97,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @throws Exception
      */
     public List<EmployeeDto> queryByParam(EmployeeDto obj) throws Exception {
-        List<Employee> employees = employeeDao.queryByParam(obj, null);
+        List<EmpDepView> employees = empDepViewDao.queryByParam(obj, null);
         if (ObjectUtil.notEmpty(employees)){
             List<EmployeeDto> dtos = BeanUtil.createBeanListByTarget(employees, EmployeeDto.class);
             return dtos;
@@ -103,14 +113,41 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @throws Exception
      */
     public PageResult<EmployeeDto> queryByPage(EmployeeDto obj, PageQuery query) throws Exception {
-        int total = employeeDao.countByParam(obj);
+        int total = empDepViewDao.countByParam(obj);
         if (total > 0){
             query.setTotal(total);
-            List<Employee> employees = employeeDao.queryByParam(obj, query);
+            List<EmpDepView> employees = empDepViewDao.queryByParam(obj, query);
             List<EmployeeDto> dtos = BeanUtil.createBeanListByTarget(employees, EmployeeDto.class);
             return new PageResult<EmployeeDto>(query, dtos);
         }
 
         return null;
     }
+
+    @Transactional
+	public void save(EmployeeDto dto, Long depId) throws Exception {
+		save(dto);
+		saveEmpDepTemp(dto.getId(), depId);
+	}
+
+    @Transactional
+	public void update(EmployeeDto dto, Long depId) throws Exception {
+		update(dto);
+		empDepTempDao.delByEmpId(dto.getId());
+		saveEmpDepTemp(dto.getId(), depId);
+	}
+    
+    /**
+     * 保存员工部门对应关系
+     * @param empId
+     * @param depId
+     * @author xiang_wang
+     * 2016年5月10日下午2:05:50
+     */
+    private void saveEmpDepTemp(Long empId, Long depId) {
+		EmpDepTemp temp = new EmpDepTemp();
+		temp.setEmpId(empId);
+		temp.setDepId(depId);
+		empDepTempDao.insertSelective(temp, false);
+	}
 }

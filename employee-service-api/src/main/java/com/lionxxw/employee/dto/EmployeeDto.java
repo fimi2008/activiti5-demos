@@ -2,6 +2,7 @@ package com.lionxxw.employee.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lionxxw.common.constants.SexEnum;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -52,7 +53,7 @@ public class EmployeeDto implements Serializable {
 
     @Getter
     @Setter
-    private Long managerId;
+    private Boolean isManager;
 
     @Getter
     @Setter
@@ -65,4 +66,17 @@ public class EmployeeDto implements Serializable {
     @Setter
     @Getter
     private String sexStr;
+    
+    /** 通过视图获取一下字段  **/
+    @Setter
+    @Getter
+    private Long depId;
+    
+    @Setter
+    @Getter
+    private String depName;
+    
+    @Setter
+    @Getter
+    private Long parentDepId;
 }

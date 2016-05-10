@@ -16,74 +16,29 @@
 						<div class="row-fluid">
 							<!-- PAGE CONTENT BEGINS HERE -->
 							<form id="submitForm" class="form-horizontal" method="POST">
-								<input type="hidden" id="id" name="id" value="${(emp.id)!}"/>
+								<input type="hidden" id="id" name="id" value="${(dep.id)!}"/>
 								<div class="control-group">
-									<label class="control-label" for="account">员工账号</label>
+									<label class="control-label" for="name">部门名称</label>
 									<div class="controls">
-										<input type="text" name="account" class="span10" id="account" placeholder="请输入员工账号" value="${(emp.account)!}" />
+										<input type="text" name="name" class="span10" id="name" placeholder="请输入部门名称" value="${(dep.name)!}" />
 									</div>
 								</div>
 								<div class="control-group">
-									<label class="control-label" for="name">员工姓名</label>
+									<label class="control-label" for="parentDepId">上级部门</label>
 									<div class="controls">
-										<input type="text" name="name" class="span10" id="name" placeholder="请输入员工姓名" value="${(emp.name)!}" />
-									</div>
-								</div>
-								<div class="control-group">
-									<label class="control-label">性别</label>
-									<div class="controls">
-										<label style="display: inline-block;">
-											<input name="sex" <#if emp?? && emp.sex?? && emp.sex == 0>checked="true"</#if> type="radio" value="0" /><span class="lbl">男</span>
-										</label>
-										<label style="display: inline-block;">
-											<input name="sex" <#if emp?? && emp.sex?? && emp.sex == 1>checked="true"</#if> type="radio" value="1" /><span class="lbl">女</span>
-										</label>
-									</div>
-								</div>
-								<div class="control-group">
-									<label class="control-label" for="pwd">密码</label>
-									<div class="controls">
-										<input type="text" name="pwd" class="span10" id="pwd" placeholder="请输入密码" value="${(emp.pwd)!}" />
-									</div>
-								</div>
-								<div class="control-group">
-									<label class="control-label" for="email">邮箱</label>
-									<div class="controls">
-										<input type="text" name="email" class="span10" id="email" placeholder="请输入邮箱" value="${(emp.email)!}" />
-									</div>
-								</div>
-								<div class="control-group">
-									<label class="control-label" for="mobile">手机号码</label>
-									<div class="controls">
-										<input type="text" name="mobile" class="span10" id="mobile" placeholder="请输入手机号码" value="${(emp.mobile)!}" />
-									</div>
-								</div>
-								<div class="control-group">
-									<label class="control-label" for="managerId">所属部门</label>
-									<div class="controls">
-										<select class="chzn-select" name="depId" id="depId" data-placeholder="请选择部门">
+										<select class="chzn-select" name="parentDepId" id="parentDepId" data-placeholder="请选择一个部门">
 											<option value=""></option>
 											<#if deps??>
-												<#list deps as dep>
-													<option <#if emp?? && emp.depId?? && emp.depId == dep.id>selected="true"</#if> value='${(dep.id)!}'>${(dep.name)!}</option>
+												<#list deps as temp>
+													<option <#if dep?? && dep.parentDepId?? && dep.parentDepId == temp.id>selected="true"</#if> value='${(temp.id)!}'>${(temp.name)!}</option>
 												</#list>
 											</#if>
 										</select>
 									</div>
 								</div>
-								<div class="control-group">
-									<label class="control-label">是否经理</label>
-									<div class="controls">
-										<label style="display: inline-block;">
-											<input name="isManager" <#if emp?? && emp.isManager?? && !emp.isManager>checked="true"</#if> type="radio" value="0" /><span class="lbl">否</span>
-										</label>
-										<label style="display: inline-block;">
-											<input name="isManager" <#if emp?? && emp.isManager?? && emp.isManager>checked="true"</#if> type="radio" value="1" /><span class="lbl">是</span>
-										</label>
-									</div>
-								</div>
+
 								<div class="form-actions">
-									<button id='savebutton' class="btn btn-info" type="button"><i class="icon-ok"></i><#if emp??>更新<#else>新增</#if></button>
+									<button id='savebutton' class="btn btn-info" type="button"><i class="icon-ok"></i><#if dep??>更新<#else>新增</#if></button>
 									&nbsp; &nbsp; &nbsp;
 									<button class="btn" type="reset" id="reset-btn"><i class="icon-undo"></i>关闭</button>
 								</div>
@@ -138,7 +93,7 @@
 				var ajaxParams = $("#submitForm").serialize();
 				$.ajax({
 					type : "POST",
-					url : "/emp/save.do",
+					url : "/dep/save.do",
 					data : ajaxParams,
 					datatype : "json",// "xml", "html", "script", "json", "jsonp", "text".
 					beforeSend : function() {

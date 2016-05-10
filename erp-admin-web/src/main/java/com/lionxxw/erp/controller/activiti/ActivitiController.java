@@ -157,7 +157,7 @@ public class ActivitiController extends BaseController {
          * 办理人必须是字符串类型的
          */
         EmployeeDto emp = getSessionEmp();
-        params.put("userId",String.valueOf(emp.getId()));
+        params.put("applicator",String.valueOf(emp.getId()));
 
         /**
          * 启动一个请假流程的实例
@@ -174,7 +174,11 @@ public class ActivitiController extends BaseController {
          */
         Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).singleResult();
 
-        params.put("userId", String.valueOf(emp.getManagerId()));
+        // TODO 查找该员工所在部门经理
+        if (emp.getIsManager()){
+        	
+        }
+        //params.put("userId", String.valueOf(emp.getManagerId()));
         taskService.complete(task.getId(), params);
         response.setMessage("请假申请成功!");
         return response;

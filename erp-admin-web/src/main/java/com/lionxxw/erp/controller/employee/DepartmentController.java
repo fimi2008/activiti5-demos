@@ -16,68 +16,62 @@ import com.lionxxw.common.model.PageResult;
 import com.lionxxw.common.model.Response;
 import com.lionxxw.common.utils.ObjectUtil;
 import com.lionxxw.employee.dto.DepartmentDto;
-import com.lionxxw.employee.dto.EmployeeDto;
 import com.lionxxw.employee.service.DepartmentService;
-import com.lionxxw.employee.service.EmployeeService;
 import com.lionxxw.erp.controller.BaseController;
 
 /**		
- * <p>Title: EmployeeController </p>
- * <p>Description: 类描述:员工操作控制层</p>
+ * <p>Title: DepartmentController </p>
+ * <p>Description: 类描述:部门操作控制层</p>
  * <p>Copyright (c) 2015 </p>
  * @author xiang_wang	
- * @date 2016年5月10日下午1:42:22
+ * @date 2016年5月10日下午1:42:47
  * @version 1.0
  */
 @Controller
-@RequestMapping(value="/emp")
-public class EmployeeController extends BaseController {
+@RequestMapping(value="/dep")
+public class DepartmentController extends BaseController {
 
-    protected static final Log logger = LogFactory.getLog(EmployeeController.class);
+    protected static final Log logger = LogFactory.getLog(DepartmentController.class);
     
-    @Autowired
-    private EmployeeService employeeService;
     @Autowired
     private DepartmentService departmentService;
-    
 
     @RequestMapping(value = "list")
-    public ModelAndView findpage(EmployeeDto dto, PageQuery query) throws Exception{
+    public ModelAndView findpage(DepartmentDto dto, PageQuery query) throws Exception{
         ModelAndView mv = this.getModelAndView();
-        PageResult<EmployeeDto> result = employeeService.queryByPage(dto, query);
-        mv.setViewName("/emp/list");
+        PageResult<DepartmentDto> result = departmentService.queryByPage(dto, query);
+        mv.setViewName("/dep/list");
         mv.addObject("datas", result);
         mv.addObject("params", dto);
         return mv;
     }
     
     /**
-     * 跳转新增/修改员工页面
+     * 跳转新增/修改部门信息页面
      * @param id
      * @return
      * @throws Exception
      * @author xiang_wang
-     * 2016年5月10日下午1:47:17
+     * 2016年5月10日下午1:45:45
      */
     @RequestMapping(value = "add")
     public ModelAndView add(Long id) throws Exception {
         ModelAndView mv = this.getModelAndView();
         List<DepartmentDto> deps = departmentService.queryByParam(null);
-        // 封装成tree机构
-        mv.addObject("deps", deps); // 部门集合
         if (ObjectUtil.notNull(id)){
-            EmployeeDto emp = employeeService.getById(id);
-            mv.addObject("emp", emp);
+            DepartmentDto dep = departmentService.getById(id);
+            mv.addObject("dep", dep);
+            deps.remove(dep); // 删除本身
         }
-        mv.setViewName("/emp/add");
+        mv.addObject("deps", deps);
+        mv.setViewName("/dep/add");
         return mv;
     }
     
     /**		
-     * <p>Description: 新增修改员工接口 </p>
+     * <p>Description: 新增修改部门接口 </p>
      * 
-     * @param dto 员工对象
-     * @param depId 部门id
+     * @param dto 部门对象
      * @return Response<String>
      * @author wangxiang	
      * @date 16/5/6 下午8:19
@@ -85,14 +79,14 @@ public class EmployeeController extends BaseController {
      */
     @RequestMapping(value = "save")
     @ResponseBody
-    public Response<String> save(EmployeeDto dto, Long depId) throws Exception{
+    public Response<String> save(DepartmentDto dto) throws Exception{
         Response<String> response = new Response<String>();
         try {
-            if (ObjectUtil.notNull(dto.getId())){
-                employeeService.update(dto, depId);
+            if (ObjectUtil.notEmpty(dto.getId())){
+            	departmentService.update(dto);
                 response.setMessage("更新成功~");
             }else{
-                employeeService.save(dto, depId);
+            	departmentService.save(dto);
                 response.setMessage("新增成功~");
             }
 		} catch (Exception e) {

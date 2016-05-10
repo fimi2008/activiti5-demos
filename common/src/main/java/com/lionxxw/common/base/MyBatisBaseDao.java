@@ -1,10 +1,10 @@
 package com.lionxxw.common.base;
 
 
+import java.util.Date;
+
 import com.lionxxw.common.constants.DataStatus;
 import com.lionxxw.common.utils.reflect.DynamicMethod;
-
-import java.util.Date;
 /**		
  * <p>Description: mybatisDao 基类 </p>
  * 
@@ -35,6 +35,20 @@ public abstract class MyBatisBaseDao<T> {
 	public int insertSelective(T obj){
 		DynamicMethod.invokeMethod(obj, "setCreateTime", new Object[]{new Date()});
 		DynamicMethod.invokeMethod(obj, "setState", new Object[]{DataStatus.ENABLED});
+		return (Integer)DynamicMethod.invokeMethod(getMapper(), "insertSelective", new Object[]{obj});
+	}
+	
+	/**
+	 * 是否拥有数据状态
+	 * @param obj
+	 * @param flag
+	 * @return
+	 * @author xiang_wang
+	 * 2016年5月10日下午2:32:02
+	 */
+	public int insertSelective(T obj, boolean flag){
+		DynamicMethod.invokeMethod(obj, "setCreateTime", new Object[]{new Date()});
+		if (flag)DynamicMethod.invokeMethod(obj, "setState", new Object[]{DataStatus.ENABLED});
 		return (Integer)DynamicMethod.invokeMethod(getMapper(), "insertSelective", new Object[]{obj});
 	}
 	

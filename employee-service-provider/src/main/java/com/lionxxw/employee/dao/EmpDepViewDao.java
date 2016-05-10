@@ -1,44 +1,46 @@
 package com.lionxxw.employee.dao;
 
+import java.util.List;
+
+import lombok.Getter;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.lionxxw.common.base.MyBatisBaseDao;
 import com.lionxxw.common.constants.DataStatus;
 import com.lionxxw.common.model.PageQuery;
 import com.lionxxw.common.utils.ObjectUtil;
 import com.lionxxw.common.utils.StringUtil;
 import com.lionxxw.employee.dto.EmployeeDto;
-import com.lionxxw.employee.entity.Employee;
-import com.lionxxw.employee.entity.EmployeeExample;
-import com.lionxxw.employee.mapper.EmployeeMapper;
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
+import com.lionxxw.employee.entity.EmpDepView;
+import com.lionxxw.employee.entity.EmpDepViewExample;
+import com.lionxxw.employee.mapper.EmpDepViewMapper;
 
 /**
- * <p>Description: 员工dao层实现 </p>
+ * <p>Description: 员工部门关联视图dao层实现 </p>
  *
  * @author wangxiang
  * @version 1.0
  * @time 16/5/5 下午9:47
  */
 @Repository
-public class EmployeeDao extends MyBatisBaseDao<Employee> {
+public class EmpDepViewDao extends MyBatisBaseDao<EmpDepView> {
 
     @Autowired
     @Getter
-    private EmployeeMapper mapper;
+    private EmpDepViewMapper mapper;
 
-    public List<Employee> queryByParam(EmployeeDto obj, PageQuery query) throws Exception{
-        EmployeeExample example = new EmployeeExample();
-        EmployeeExample.Criteria criteria = example.createCriteria();
+    public List<EmpDepView> queryByParam(EmployeeDto obj, PageQuery query) throws Exception{
+        EmpDepViewExample example = new EmpDepViewExample();
+        EmpDepViewExample.Criteria criteria = example.createCriteria();
         assemblyParams(obj, criteria);
         if(null != query){
             example.setOrderByClause("create_time desc limit "+query.getStartNum() +"," + query.getPageSize());
         }else{
             example.setOrderByClause("create_time desc");
         }
-        List<Employee> results = mapper.selectByExample(example);
+        List<EmpDepView> results = mapper.selectByExample(example);
         return results;
     }
 
@@ -52,13 +54,13 @@ public class EmployeeDao extends MyBatisBaseDao<Employee> {
      * @version 1.0
      */
     public int countByParam(EmployeeDto obj) throws Exception{
-        EmployeeExample example = new EmployeeExample();
-        EmployeeExample.Criteria criteria = example.createCriteria();
+    	EmpDepViewExample example = new EmpDepViewExample();
+    	EmpDepViewExample.Criteria criteria = example.createCriteria();
         assemblyParams(obj, criteria);
         return mapper.countByExample(example);
     }
 
-    private void assemblyParams(EmployeeDto params, EmployeeExample.Criteria criteria) {
+    private void assemblyParams(EmployeeDto params, EmpDepViewExample.Criteria criteria) {
         if (null != params) {
             if (ObjectUtil.notNull(params.getId())){
                 criteria.andIdEqualTo(params.getId());
@@ -83,6 +85,12 @@ public class EmployeeDao extends MyBatisBaseDao<Employee> {
             }
             if (StringUtil.notTrimEmpty(params.getPwd())){
                 criteria.andPwdEqualTo(params.getPwd().trim());
+            }
+            if (ObjectUtil.notNull(params.getDepId())){
+                criteria.andDepIdEqualTo(params.getDepId());
+            }
+            if (ObjectUtil.notNull(params.getParentDepId())){
+                criteria.andParentDepIdEqualTo(params.getParentDepId());
             }
         }
         criteria.andStateEqualTo(DataStatus.ENABLED);

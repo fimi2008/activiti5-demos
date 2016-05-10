@@ -42,6 +42,10 @@
                                                 id="toGreen">
                                             <i class="icon-ok"></i>
                                         </button>
+                                        <button class="btn btn-mini btn-danger" data-obj-id="${(datas.taskId)!}"
+                                                id="toRefuse">
+                                            <i class="icon-trash"></i>
+                                        </button>
                                     </#if>
                                 </td>
                             </tr>
@@ -111,11 +115,50 @@
     $(function () {
         $("#toGreen").on('click', function () {
             var id = $(this).attr("data-obj-id");
-            layer.confirm('确定要删除吗？', {icon: 3}, function (index) {
+            layer.confirm('确定要同意吗？', {icon: 3}, function (index) {
                 $.ajax({
                     type: "POST",
                     url: "/act/completeTask.do",
                     data: {taskId: id,isAgree:1},
+                    dataType: "json",
+                    success: function (data) {
+                        var jsondata = null;//eval('(' + data + ')');
+                        if (data instanceof Object) {
+                            jsondata = data;
+                        } else {
+                            jsondata = eval('(' + data + ')');
+                        }
+                        if (jsondata.status == 200) {
+                            layer.msg(jsondata.message, {
+                                shade: [0.9, '#000'],
+                                icon: 6,
+                                time: 1500 //2秒关闭（如果不配置，默认是3秒）
+                            }, function () {
+                                //do something
+                                parent.reload_page();
+                                parent.layer.close(index);
+                            });
+                        } else {
+                            layer.msg(jsondata.message, {
+                                shade: [0.9, '#000'],
+                                icon: 6,
+                                time: 1500 //2秒关闭（如果不配置，默认是3秒）
+                            }, function () {
+                                return;
+                            });
+                        }
+                    }
+                });
+            });
+        });
+
+        $("#toRefuse").on('click', function () {
+            var id = $(this).attr("data-obj-id");
+            layer.confirm('确定要拒绝吗？', {icon: 3}, function (index) {
+                $.ajax({
+                    type: "POST",
+                    url: "/act/completeTask.do",
+                    data: {taskId: id,isAgree:0},
                     dataType: "json",
                     success: function (data) {
                         var jsondata = null;//eval('(' + data + ')');

@@ -2,6 +2,7 @@ package com.lionxxw.erp.controller.activiti;
 
 import com.lionxxw.common.constants.DataStatus;
 import com.lionxxw.common.model.Response;
+import com.lionxxw.common.utils.ObjectUtil;
 import com.lionxxw.common.utils.StringUtil;
 import com.lionxxw.employee.dto.EmployeeDto;
 import com.lionxxw.employee.service.EmployeeService;
@@ -125,7 +126,7 @@ public class ActivitiController extends BaseController {
     }
 
     /**
-     * 流程申请 (根据流程实例id,中的key,跳转不同的页面)
+     * 流程申请 (根据流程定义id,中的key,跳转不同的页面)
      * @param pdId 流程id
      * @return ModelAndView
      */
@@ -150,14 +151,14 @@ public class ActivitiController extends BaseController {
      */
     @RequestMapping("leave")
     @ResponseBody
-    public Response<String> leave(int leaveDay, String leaveReason, String pdId){
+    public Response<String> leave(int leaveDay, String leaveReason, String pdId) throws Exception{
         Response<String> response = new Response<String>();
         Map<String, Object> params = new HashMap<String, Object>();
         /**
          * 办理人必须是字符串类型的
          */
         EmployeeDto emp = getSessionEmp();
-        params.put("applicator",String.valueOf(emp.getId()));
+        params.put("applicator", emp.getId());
 
         /**
          * 启动一个请假流程的实例
@@ -165,8 +166,6 @@ public class ActivitiController extends BaseController {
         // 发起流程是指定发起人
         identityService.setAuthenticatedUserId(String.valueOf(emp.getId()));
         ProcessInstance pi =  runtimeService.startProcessInstanceById(pdId, params);
-        params.put("leaveDay", leaveDay);
-        params.put("leaveReason", leaveReason);
 
         /**
          * 根据实例ID查询任务
@@ -174,11 +173,29 @@ public class ActivitiController extends BaseController {
          */
         Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).singleResult();
 
-        // TODO 查找该员工所在部门经理
+        params.clear();
+        // 查找该员工所在部门经理
         if (emp.getIsManager()){
-        	
+            params.put("manager", emp.getId());
+        }else{
+            EmployeeDto param = new EmployeeDto();
+            param.setDepId(emp.getDepId());
+            param.setIsManager(true);
+            List<EmployeeDto> managers = employeeService.queryByParam(param);
+            if (ObjectUtil.notEmpty(managers)){
+                params.put("manager", managers.get(0).getId());
+            }else{
+                param.setDepId(emp.getParentDepId());
+                managers = employeeService.queryByParam(param);
+                if (ObjectUtil.notEmpty(managers)){
+                    params.put("manager", managers.get(0).getId());
+                }else{
+                    throw new RuntimeException("对不起,你所在部门及上一级部门,均无经理可以进行审批!");
+                }
+            }
         }
-        //params.put("userId", String.valueOf(emp.getManagerId()));
+        params.put("leaveDay", leaveDay);
+        params.put("leaveReason", leaveReason);
         taskService.complete(task.getId(), params);
         response.setMessage("请假申请成功!");
         return response;
@@ -227,31 +244,23 @@ public class ActivitiController extends BaseController {
      * @return
      */
     @RequestMapping("taskDeatil")
-    public ModelAndView taskDeatil(String taskId){
-
+    public ModelAndView taskDeatil(String taskId) throws Exception{
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         /**
-         * 获取流程key
+         * 获取流程定义id
          */
         ProcessDefinition pd = repositoryService.getProcessDefinition(task.getProcessDefinitionId());
 
         Map<String, Object> params =  taskService.getVariables(taskId);
         String pdId = task.getProcessDefinitionId();
-        EmployeeDto emp = getSessionEmp();
-        params.put("emp", emp);
+        params.put("emp", employeeService.getById(Long.valueOf(params.get("applicator")+"")));
         params.put("taskId", taskId);
         params.put("pdId", pdId);
         params.put("coordinates", currentImage(taskId));
-
-        /**
-         * 当前操作人
-         */
-        params.put("assignee", task.getAssignee());
-
+        params.put("assignee", getSessionEmp().getId());
         List<HistoricTaskInstance> instans = historyService.createHistoricTaskInstanceQuery().
                 processInstanceId(task.getProcessInstanceId()).orderByHistoricTaskInstanceStartTime().asc().list();
         params.put("instans", instans);
-
 
         ModelAndView mv = getModelAndView();
         mv.setViewName("/act/"+pdId.split(":")[0]+"Detail");
@@ -275,30 +284,27 @@ public class ActivitiController extends BaseController {
 
     /**
      * 完成任务
-     * @param request
      * @param taskId
+     * @param isAgree 1-同意,0-拒绝
      * @return
      */
     @RequestMapping("completeTask")
     @ResponseBody
-    public Response<String> completeTask(HttpServletRequest request, String taskId, Integer isAgree){
+    public Response<String> completeTask(String taskId, Integer isAgree) throws Exception{
         if(isAgree != null){
-            Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("isAgree", isAgree);
-            if(isAgree.intValue() == 0){
-                // 驳回编辑
-                params.put("ifEdit", 0);
-                // 不通过时候从新回退流程
-                List<IdentityLink> links = runtimeService.getIdentityLinksForProcessInstance(task.getProcessInstanceId());
-                for(IdentityLink link : links){
-                    if("starter".equals(link.getType())){
-                        params.put("userId", link.getUserId());
-                    }
-                }
+            EmployeeDto emp = getSessionEmp();
+            EmployeeDto param = new EmployeeDto();
+            param.setDepId(emp.getParentDepId());
+            param.setIsManager(true);
+            List<EmployeeDto> managers = employeeService.queryByParam(param);
+            if (ObjectUtil.notEmpty(managers)){
+                params.put("boss", managers.get(0).getId());
+            }else{
+                throw new RuntimeException("对不起,你的上一级部门,无经理可以进行审批!");
             }
 
-            taskService.removeVariable(taskId, "isAgree");
             taskService.complete(taskId, params);
         }else{
             taskService.complete(taskId);

@@ -248,6 +248,7 @@ public class ActivitiController extends BaseController {
                 processInstanceId(task.getProcessInstanceId()).orderByHistoricTaskInstanceStartTime().asc().list();
         params.put("instans", instans);
 
+
         ModelAndView mv = getModelAndView();
         mv.setViewName("/act/"+pdId.split(":")[0]+"Detail");
         mv.addObject("datas", params);
@@ -275,16 +276,13 @@ public class ActivitiController extends BaseController {
      * @return
      */
     @RequestMapping("completeTask")
-    public Response<String> completeTask(HttpServletRequest request, String taskId){
-
-        String isAgree = request.getParameter("isAgree");
-
-        if(isAgree != null && !"".equals(isAgree)){
+    @ResponseBody
+    public Response<String> completeTask(HttpServletRequest request, String taskId, Integer isAgree){
+        if(isAgree != null){
             Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("isAgree", Integer.valueOf(isAgree));
-            if(Integer.valueOf(isAgree) == 0){
+            params.put("isAgree", isAgree);
+            if(isAgree.intValue() == 0){
                 // 驳回编辑
                 params.put("ifEdit", 0);
                 // 不通过时候从新回退流程

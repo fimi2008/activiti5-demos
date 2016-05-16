@@ -55,10 +55,10 @@
 		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
 
 	<!--拦截器配置-->
-	<!--<mvc:interceptors>
+	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
-			<bean class="com.tianfang.admin.filter.LoginFilter" />
+			<bean class="com.lionxxw.erp.interceptors.LoginInterceptor" />
 		</mvc:interceptor>
-	</mvc:interceptors>-->
+	</mvc:interceptors>
 </beans>

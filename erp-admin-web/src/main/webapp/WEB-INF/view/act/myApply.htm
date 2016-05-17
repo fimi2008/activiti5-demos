@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <#include "/common/head.htm"/>
+</head>
+<body>
+<#include "/common/topHead.htm"/>
+<div class="container-fluid" id="main-container">
+    <a href="#" id="menu-toggler"><span></span></a><!-- menu toggler -->
+    <#include "/common/left.htm"/>
+    <div id="main-content" class="clearfix">
+
+        <!--面包屑导航start-->
+        <div id="breadcrumbs">
+            <ul class="breadcrumb">
+                <li><i class="icon-home"></i> <a href="/main.do">主页</a><span class="divider"><i class="icon-angle-right"></i></span>
+                </li>
+                <li class="active">流程管理</li>
+            </ul>
+        </div>
+        <!--面包屑导航end-->
+
+        <div id="page-content" class="clearfix">
+
+            <div class="page-header position-relative">
+                <h1>流程管理 <small><i class="icon-double-angle-right"></i> 我的审核</small></h1>
+            </div><!--/page-header-->
+
+            <div class="row-fluid">
+                <!-- PAGE CONTENT BEGINS HERE -->
+                <div class="row-fluid">
+                    <div class="span12">
+                        <table id="table_bug_report" class="table table-striped table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th class="center">
+                                    <label><input type="checkbox" /><span class="lbl"></span></label>
+                                </th>
+                                <th>id</th>
+                                <th>流程id</th>
+                                <th class="hidden-480">申请人</th>
+                                <th class="hidden-480">申请时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <#if datas??>
+                                <#list datas as data>
+                                    <tr>
+                                        <td class='center'>
+                                            <label><input type='checkbox' /><span class="lbl"></span></label>
+                                        </td>
+                                        <td><a href='#'>${(data.id)!}</a></td>
+                                        <td>${(data.processDefinitionId)!}</td>
+                                        <td class='hidden-480'>${(data.startUserId)!}</td>
+                                        <td class='hidden-480'>
+                                            ${(data.startTime?string("yyyy-MM-dd HH:mm:ss"))!}
+                                        </td>
+                                        <td>
+                                            <div id="operation" class='hidden-phone visible-desktop btn-group'>
+                                                <a id='detail' data-obj-id="${(data.id)!}" class='btn btn-mini btn-info' style="margin-left:5px;">详情</a>
+                                                <a id='deleteObj' data-obj-id="${(data.id)!}" class='btn btn-mini btn-danger' style="margin-left:5px;" title="删除"><i class='icon-trash'></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </#list>
+                            </#if>
+
+                            </tbody>
+                        </table>
+                    </div><!--/span-->
+                </div><!--/row-->
+
+                <!-- PAGE CONTENT ENDS HERE -->
+            </div><!--/row-->
+
+        </div><!--/#page-content-->
+
+        <!--/#page-content-->
+
+        <!--/#ace-settings-container-->
+    </div>
+    <!-- #main-content -->
+</div>
+<!--/.fluid-container#main-container-->
+<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+    <i class="icon-double-angle-up icon-only"></i>
+</a>
+<!-- basic scripts -->
+<script src="/static/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+    window.jQuery || document.write("<script src='/static/js/jquery-1.9.1.min.js'>\x3C/script>");
+</script>
+
+<script src="/static/js/bootstrap.min.js"></script>
+<!-- page specific plugin scripts -->
+
+<script type="text/javascript" src="/static/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.dataTables.bootstrap.js"></script>
+<!-- ace scripts -->
+<script src="/static/js/ace-elements.min.js"></script>
+<script src="/static/js/ace.min.js"></script>
+<!-- inline scripts related to this page -->
+
+<script type="text/javascript" src="/plugins/layer2.0/layer.js"></script>
+<script type="text/javascript">
+    function reload_page(){
+        window.location.reload();//刷新当前页面
+    }
+    $(function () {
+        //左侧菜单打开
+        $('#act_li').addClass('active open');
+        $('#act_li ul').show();
+        $('#act_li ul li').each(function(i){
+            if (i == 2){
+                $(this).addClass('active');
+            }
+        });
+
+        $('table th input:checkbox').on('click', function () {
+            var that = this;
+            $(this).closest('table').find('tr > td:first-child input:checkbox')
+                    .each(function () {
+                        this.checked = that.checked;
+                        $(this).closest('tr').toggleClass('selected');
+                    });
+
+        });
+        $('[data-rel=tooltip]').tooltip();
+
+        $("#operation #deleteObj").on('click',function(){
+            var ids = $(this).attr("data-obj-id");
+            layer.confirm('确定要删除吗？', {icon: 3}, function(index){
+                $.ajax({
+                    type: "POST",
+                    url: "/act/deleteDeployment.do",
+                    data: {depId:ids},
+                    dataType: "json",
+                    success: function(data){
+                        var jsondata = null;//eval('(' + data + ')');
+                        if (data instanceof Object){
+                            jsondata = data;
+                        }else{
+                            jsondata = eval('(' + data + ')');
+                        }
+                        if(jsondata.status == 200){
+                            layer.msg(jsondata.message, {
+                                shade: [0.9, '#000'],
+                                icon: 6,
+                                time: 1500 //2秒关闭（如果不配置，默认是3秒）
+                            }, function(){
+                                //do something
+                                reload_page();
+                            });
+                        }else{
+                            layer.msg(jsondata.message, {
+                                shade: [0.9, '#000'],
+                                icon: 6,
+                                time: 1500 //2秒关闭（如果不配置，默认是3秒）
+                            },function(){
+                                return;
+                            });
+                        }
+                    }
+                });
+            });
+        });
+
+        // 申请详情
+        $("#operation #detail").on('click',function(){
+            var id = $(this).attr("data-obj-id");
+            //iframe层-父子操作
+            layer.open({
+                type: 2,
+                title: '申请详情',
+                area: ['60%', '90%'],
+                fix: true, //不固定
+                maxmin: true,
+                content: '/act/taskDeatil.do?taskId='+id
+            });
+        });
+
+    })
+</script>
+</body>
+</html>

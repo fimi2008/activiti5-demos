@@ -8,7 +8,11 @@ import com.lionxxw.employee.dto.EmployeeDto;
 import com.lionxxw.employee.service.EmployeeService;
 import com.lionxxw.erp.controller.BaseController;
 import org.activiti.engine.*;
+import org.activiti.engine.history.HistoricDetail;
+import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.identity.User;
+import org.activiti.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.repository.ProcessDefinition;
@@ -138,7 +142,7 @@ public class ActivitiController extends BaseController {
         String[] split = pdId.split(":");
         ModelAndView mv = getModelAndView();
         mv.addObject("pdId", pdId);
-        mv.setViewName("/act/"+split[0]);
+        mv.setViewName("/act/" + split[0]);
         return mv;
     }
 
@@ -212,6 +216,24 @@ public class ActivitiController extends BaseController {
         List<Task> list = taskService.createTaskQuery().taskAssignee(String.valueOf(emp.getId())).orderByTaskCreateTime().desc().list();
         mv.addObject("datas", list);
         mv.setViewName("/act/myTask");
+        return mv;
+    }
+
+    /**
+     * <p>Description: 查询我申请的流程 </p>
+     *
+     * @return ModelAndView
+     * @author wangxiang
+     * @date 16/5/16 下午5:50
+     * @version 1.0
+     */
+    @RequestMapping("queryMyApply")
+    public ModelAndView queryMyApply(){
+        ModelAndView mv = getModelAndView();
+        EmployeeDto emp = getSessionEmp();
+        List<HistoricProcessInstance> list = historyService.createHistoricProcessInstanceQuery().startedBy(String.valueOf(emp.getId())).list();
+        mv.addObject("datas", list);
+        mv.setViewName("/act/myApply");
         return mv;
     }
 

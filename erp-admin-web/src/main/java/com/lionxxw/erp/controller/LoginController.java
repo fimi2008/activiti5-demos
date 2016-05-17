@@ -88,4 +88,21 @@ public class LoginController extends BaseController{
         }
         return mv;
     }
+
+    /**
+     * <p>Description: 登出操作 </p>
+     *
+     * @param session
+     * @return ModelAndView
+     * @author wangxiang
+     * @date 16/5/17 上午9:48
+     * @version 1.0
+     */
+    @RequestMapping(value = "logout")
+    public ModelAndView logout(HttpSession session) throws Exception{
+        ModelAndView mv = getModelAndView();
+        session.removeAttribute(DataStatus.SESSION_EMP);
+        mv.setViewName("login");
+        return mv;
+    }
 }
